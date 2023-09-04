@@ -1,5 +1,8 @@
 import { LockliftConfig } from "locklift";
 import { FactorySource } from "./build/factorySource";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 declare global {
   const locklift: import("locklift").Locklift<FactorySource>;
@@ -25,7 +28,11 @@ const config: LockliftConfig = {
 
     // Specify config for external contracts as in example
     externalContracts: {
-      "node_modules/broxus-ton-tokens-contracts/build": ['TokenRootUpgradeable', 'TokenWalletUpgradeable', 'TokenWalletPlatform']
+      "node_modules/broxus-ton-tokens-contracts/build": [
+        "TokenRootUpgradeable",
+        "TokenWalletUpgradeable",
+        "TokenWalletPlatform",
+      ],
     },
   },
   linker: {
@@ -53,8 +60,9 @@ const config: LockliftConfig = {
       // This giver is default local-node giverV2
       giver: {
         // Check if you need provide custom giver
-        address: "0:ece57bcc6c530283becbbd8a3b24d3c5987cdddc3c8b7b33be6e4a6312490415",
-        key: "172af540e43a524763dd53b26a066d472a97c4de37d5498170564510608250c3",
+        address: process.env.GIVER_ADDRESS,
+        phrase: process.env.GIVER_MNEMONIC,
+        accountId: 0,
       },
       tracing: {
         endpoint: LOCAL_NETWORK_ENDPOINT,
@@ -62,8 +70,8 @@ const config: LockliftConfig = {
       keys: {
         // Use everdev to generate your phrase
         // !!! Never commit it in your repos !!!
-        phrase: "action inject penalty envelope rabbit element slim tornado dinner pizza off blood",
-        amount: 20,
+        phrase: process.env.GIVER_MNEMONIC,
+        amount: 1,
       },
     },
     test: {
@@ -100,9 +108,12 @@ const config: LockliftConfig = {
           endpoint: VENOM_TESTNET_ENDPOINT,
         },
       },
+
+      // This giver is default local-node giverV2
       giver: {
-        address: "0:0000000000000000000000000000000000000000000000000000000000000000",
-        phrase: "phrase",
+        // Check if you need provide custom giver
+        address: process.env.GIVER_ADDRESS,
+        phrase: process.env.GIVER_MNEMONIC,
         accountId: 0,
       },
       tracing: {
@@ -111,8 +122,8 @@ const config: LockliftConfig = {
       keys: {
         // Use everdev to generate your phrase
         // !!! Never commit it in your repos !!!
-        // phrase: "action inject penalty envelope rabbit element slim tornado dinner pizza off blood",
-        amount: 20,
+        phrase: process.env.GIVER_MNEMONIC,
+        amount: 1,
       },
     },
     main: {

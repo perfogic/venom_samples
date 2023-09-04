@@ -1,11 +1,11 @@
-import {zeroAddress} from "locklift";
+import { zeroAddress } from "locklift";
 import BigNumber from "bignumber.js";
-import {EverWalletAccount} from "everscale-standalone-client/nodejs";
+import { EverWalletAccount } from "everscale-standalone-client/nodejs";
 
 async function main() {
   const signer = (await locklift.keystore.getSigner("0"))!;
   // The same EverWallet we deployed in script 0, because they are from one pubkey
-  const diceOwnerWallet = await EverWalletAccount.fromPubkey({publicKey: signer.publicKey, workchain: 0});
+  const diceOwnerWallet = await EverWalletAccount.fromPubkey({ publicKey: signer.publicKey, workchain: 0 });
 
   // Production ready tip-3 has a bit more constructor arguments than our
   // toy example, because it is support more features, like burn tokens.
@@ -49,9 +49,9 @@ async function main() {
 
   // Root token constructor params:
   // Mint initial supply to zero address
-  const initialSupplyTo = diceOwnerWallet.address;
+  const initialSupplyTo = zeroAddress;
   // How many tokens mint after deploy to initialSupplyTo
-  const initialSupply = '0';
+  const initialSupply = "0";
   // Disable future minting of the new tokens
   const disableMint = false;
   // Disable ability of the root owner to burn user's tokens
@@ -60,7 +60,7 @@ async function main() {
   // Useful in some applications like bridges.
   const pauseBurn = false;
   // How many nano VENOMs use to deploy wallet if initial supplier
-  const initialDeployWalletValue = '0';
+  const initialDeployWalletValue = "0";
 
   // TokenRoot static params:
   // Owner of the root contract (can mint or burn tokens)
@@ -74,26 +74,28 @@ async function main() {
 
   // Token Root static variables.
   const initParams = {
-    randomNonce_: '5',
+    randomNonce_: "0",
     rootOwner_: rootOwner,
     name_: name,
     symbol_: symbol,
     deployer_: zeroAddress,
     decimals_: 9,
     walletCode_: TokenWalletUpgradable.code,
-    platformCode_: TokenWalletPlatform.code
-  }
+    platformCode_: TokenWalletPlatform.code,
+  };
 
   const expectedAddress = await locklift.provider.getExpectedAddress(TokenRootUpgradeable.abi, {
     initParams: initParams,
     publicKey: signer.publicKey,
-    tvc: TokenRootUpgradeable.tvc
+    tvc: TokenRootUpgradeable.tvc,
   });
 
   // Check is contract already deployed
-  const account_state = (await locklift.provider.getFullContractState({
-    address: expectedAddress
-  })).state;
+  const account_state = (
+    await locklift.provider.getFullContractState({
+      address: expectedAddress,
+    })
+  ).state;
 
   if (account_state !== undefined && account_state.isDeployed) {
     throw new Error(`TokenRoot is already deployed at ${expectedAddress.toString()}`);
@@ -120,10 +122,12 @@ async function main() {
 
   console.log(`Token root deployed at: ${tokenRoot.address.toString()}`);
 
-  const wallet = await tokenRoot.methods.walletOf({ walletOwner: rootOwner, answerId: 0, }).call({responsible: true})
-  console.log(wallet)
+  const wallet = await tokenRoot.methods.walletOf({ walletOwner: rootOwner, answerId: 0 }).call({ responsible: true });
+  console.log(wallet);
 
-  // Token Root: e21b7b3affdc8f54421be17eea5e7240bc93a7cbb6b39f74eef15294e5e4a883
+  // Token Root: 0:e21b7b3affdc8f54421be17eea5e7240bc93a7cbb6b39f74eef15294e5e4a883
+  // Testnet: 0:d743c8cf8f9bd5c851a14234449b1629c1b23dda249760af0cb85c0b50b8a928
+  // Giver Wallet: 0:4c4552231710115774c9b984c900caf4b1f64cba469218b3e730c877b0e8d071
 }
 
 main()
