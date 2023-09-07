@@ -107,8 +107,8 @@ const config: LockliftConfig = {
       // This giver is default local-node giverV2
       giver: {
         // Check if you need provide custom giver
-        address: process.env.GIVER_ADDRESS,
-        phrase: process.env.GIVER_MNEMONIC,
+        address: process.env.GIVER_ADDRESS as string,
+        phrase: process.env.GIVER_MNEMONIC as string,
         accountId: 0,
       },
       tracing: {

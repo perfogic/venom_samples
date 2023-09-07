@@ -1,0 +1,40 @@
+pragma ever-solidity >= 0.61.2;
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
+contract SetState {
+    uint16 public state;
+
+    event StateChanged(uint16 _state);
+
+    constructor(address _gasTo) public {
+		require(tvm.pubkey() != 0, 101);
+		require(msg.pubkey() == tvm.pubkey(), 102);
+        tvm.accept();
+
+        tvm.rawReserve(0.1 ever, 0);
+
+        _gasTo.transfer({
+            value: 0,
+            flag: 128,
+            bounce: false
+        });
+    }
+
+    function setStateByOwner(uint16 _state) external externalMsg {
+        require(msg.pubkey() == tvm.pubkey(), 103);
+        tvm.accept();
+        _setState(_state);
+    }
+
+    function setStateByValue(uint16 _state) external internalMsg {
+        require(msg.value == 1 ever, 104);
+        _setState(_state);
+    }
+
+
+    function _setState(uint16 _state) internal {
+        state = _state;
+        emit StateChanged(state);
+    }
+}
