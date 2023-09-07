@@ -1,0 +1,57 @@
+pragma ever-solidity >= 0.61.2;
+pragma AbiHeader expire;
+pragma AbiHeader pubkey;
+
+import "@broxus/tip3/contracts/libraries/TokenMsgFlag.tsol";
+
+
+contract LearnTvm {
+    address static owner_;
+    uint128 static timestamp_;
+
+    constructor() public {
+        tvm.accept();
+        tvm.rawReserve(1 ever, 0);
+
+        owner_.transfer({
+            value: 0,
+            flag: TokenMsgFlag.ALL_NOT_RESERVED,
+            bounce: false
+        });
+    }
+
+    function transferWithAccept(address _to, uint128 _val) external {
+        tvm.accept();
+        tvm.rawReserve(0.8 ever, 0);
+
+
+        _to.transfer({
+            value: _val,
+            flag: TokenMsgFlag.SENDER_PAYS_FEES,
+            bounce: false
+        });
+
+        msg.sender.transfer({
+            value: 0,
+            flag: TokenMsgFlag.ALL_NOT_RESERVED,
+            bounce: false
+        });
+    }
+
+    function transferWithoutAccept(address _to, uint128 _val) external {
+        tvm.rawReserve(0.8 ever, 0);
+
+
+        _to.transfer({
+            value: _val,
+            flag: TokenMsgFlag.SENDER_PAYS_FEES,
+            bounce: false
+        });
+
+        msg.sender.transfer({
+            value: 0,
+            flag: TokenMsgFlag.ALL_NOT_RESERVED,
+            bounce: false
+        });
+    }
+}
